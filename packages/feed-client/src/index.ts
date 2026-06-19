@@ -19,6 +19,9 @@ export { FinancialsResource } from "./resources/financials.js";
 export { NewsResource } from "./resources/news.js";
 export { MarketResource } from "./resources/market.js";
 export { EconomicResource } from "./resources/economic.js";
+export { CalendarResource } from "./resources/calendar.js";
+export { AnalystResource } from "./resources/analyst.js";
+export { DirectoryResource } from "./resources/directory.js";
 
 // Response types
 export type { ReportingPeriod, StatementQuery, DateRangeQuery } from "./types/common.js";
@@ -52,3 +55,24 @@ export type {
   EconomicCalendarEvent,
   MarketRiskPremium,
 } from "./types/economic.js";
+export type {
+  EarningsEvent,
+  DividendEvent,
+  IpoEvent,
+  StockSplitEvent,
+} from "./types/calendar.js";
+export type {
+  PriceTargetSummary,
+  PriceTargetConsensus,
+  AnalystEstimate,
+  AnalystEstimateQuery,
+  RatingSnapshot,
+  HistoricalRating,
+  StockGrade,
+  GradesConsensus,
+} from "./types/analyst.js";
+export type {
+  SymbolSearchResult,
+  StockListItem,
+  ExchangeInfo,
+} from "./types/directory.js";

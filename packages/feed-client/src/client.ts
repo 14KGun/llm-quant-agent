@@ -1,6 +1,9 @@
 import { resolveConfig, type FeedClientConfig, type ResolvedConfig } from "./config.js";
 import { HttpClient, type QueryParams } from "./http.js";
+import { AnalystResource } from "./resources/analyst.js";
+import { CalendarResource } from "./resources/calendar.js";
 import { CompanyResource } from "./resources/company.js";
+import { DirectoryResource } from "./resources/directory.js";
 import { EconomicResource } from "./resources/economic.js";
 import { FinancialsResource } from "./resources/financials.js";
 import { MarketResource } from "./resources/market.js";
@@ -35,6 +38,12 @@ export class FeedClient {
   readonly market: MarketResource;
   /** 경제지표 엔드포인트. */
   readonly economic: EconomicResource;
+  /** 캘린더 엔드포인트(실적/배당/IPO/분할). */
+  readonly calendar: CalendarResource;
+  /** 애널리스트 엔드포인트. */
+  readonly analyst: AnalystResource;
+  /** 검색 / 디렉토리 엔드포인트. */
+  readonly directory: DirectoryResource;
   private readonly config: ResolvedConfig;
 
   constructor(config: FeedClientConfig = {}) {
@@ -46,6 +55,9 @@ export class FeedClient {
     this.news = new NewsResource(this.http);
     this.market = new MarketResource(this.http);
     this.economic = new EconomicResource(this.http);
+    this.calendar = new CalendarResource(this.http);
+    this.analyst = new AnalystResource(this.http);
+    this.directory = new DirectoryResource(this.http);
   }
 
   /** Issue a typed GET request against an FMP endpoint path. */
