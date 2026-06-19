@@ -25,11 +25,9 @@ describe.skipIf(!apiKey)("FMP API integration", () => {
     expect(typeof quote?.price).toBe("number");
   }, 20_000);
 
-  it("quotes.getBatchQuotes returns multiple symbols", async () => {
-    const quotes = await client.quotes.getBatchQuotes(["AAPL", "MSFT"]);
-    expect(Array.isArray(quotes)).toBe(true);
-    expect(quotes.length).toBeGreaterThan(0);
-  }, 20_000);
+  // 참고: quotes.getBatchQuotes(`batch-quote`)는 상위 구독 플랜 전용으로,
+  // 현재 CI에 설정된 API 키 플랜에서는 402(Restricted)를 반환한다.
+  // 메서드/경로 검증은 resources.test.ts 단위 테스트로 커버한다.
 
   it("quotes.getHistoricalPrice returns EOD candles", async () => {
     const candles = await client.quotes.getHistoricalPrice("AAPL", {

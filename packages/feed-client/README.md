@@ -40,9 +40,11 @@ const news = await client.request<unknown[]>("news/general-latest", { limit: 5 }
 
 | 리소스 | 메서드 |
 |---|---|
-| `quotes` | `getQuote` · `getQuoteShort` · `getBatchQuotes` · `getHistoricalPrice` |
+| `quotes` | `getQuote` · `getQuoteShort` · `getBatchQuotes`¹ · `getHistoricalPrice` |
 | `company` | `getProfile` |
 | `financials` | `getIncomeStatement` · `getBalanceSheet` · `getCashFlow` · `getRatios` · `getKeyMetrics` |
+
+> ¹ `getBatchQuotes`(`batch-quote`)는 FMP 상위 구독 플랜 전용으로, 하위 플랜에서는 402(Restricted)가 반환된다.
 
 ## 설정 옵션
 
