@@ -25,7 +25,7 @@ FMP API + 토스증권 API 기반 LLM 투자 에이전트 시스템.
 
 **허용 타입**: `feat` / `fix` / `docs` / `chore` / `refactor` / `test` / `perf`
 
-**허용 스코프**: `api` / `web` / `agents` / `trading-client` / `feed-client` / `types`
+**허용 스코프**: `api` / `web` / `agents` / `trading-client` / `feed-client` / `types` / `harness`
 
 **예시**
 ```
