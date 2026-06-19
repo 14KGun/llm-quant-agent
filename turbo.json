@@ -6,7 +6,8 @@
       "outputs": ["dist/**"]
     },
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "passThroughEnv": ["FMP_API_KEY"]
     },
     "typecheck": {
       "dependsOn": ["^build"]

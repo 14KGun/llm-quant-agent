@@ -39,3 +39,5 @@ jobs:
 
       - name: Test
         run: pnpm test
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
