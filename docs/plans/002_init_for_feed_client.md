@@ -108,10 +108,11 @@ FMP API 카테고리를 에이전트 활용도 기준으로 9개 도메인으로
 - [x] Economic Data 모듈 (treasury, indicators, economic calendar, risk premium)
 - [x] 리소스별 단위 테스트 + 실제 엔드포인트 통합 테스트(402는 skip)
 
-### Phase 4 — Calendars / Analyst / Search
-- [ ] Calendars (earnings/dividends/ipo/splits)
-- [ ] Analyst (price-target/estimates/ratings/upgrades-downgrades)
-- [ ] Directory & Search
+### Phase 4 — Calendars / Analyst / Search ✅
+- [x] Calendars (earnings/dividends/ipo/splits)
+- [x] Analyst (price-target summary/consensus, estimates, ratings, grades)
+- [x] Directory & Search (search-symbol/name, stock/etf list, available exchanges/sectors/industries)
+- [x] 리소스별 단위 테스트 + 실제 엔드포인트 통합 테스트(402는 skip)
 
 ### Phase 5 — 견고성 & 문서화
 - [ ] 모듈별 unit test (fetch mocking)

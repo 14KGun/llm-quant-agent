@@ -133,4 +133,45 @@ describe.skipIf(!apiKey)("FMP API integration", () => {
     expect(Array.isArray(series)).toBe(true);
     expect(series.length).toBeGreaterThan(0);
   }, 20_000);
+
+  // --- Phase 4: Calendars / Analyst / Directory (402는 skip) ---
+
+  it("calendar.getEarningsCalendar returns events", async (ctx) => {
+    const events = await callOrSkip402(ctx, () =>
+      client.calendar.getEarningsCalendar({ from: "2024-01-01", to: "2024-01-31" }),
+    );
+    if (!events) return;
+    expect(Array.isArray(events)).toBe(true);
+    expect(events.length).toBeGreaterThan(0);
+  }, 20_000);
+
+  it("analyst.getPriceTargetSummary returns AAPL summary", async (ctx) => {
+    const summary = await callOrSkip402(ctx, () =>
+      client.analyst.getPriceTargetSummary("AAPL"),
+    );
+    if (!summary) return;
+    expect(Array.isArray(summary)).toBe(true);
+  }, 20_000);
+
+  it("analyst.getRatingsSnapshot returns AAPL rating", async (ctx) => {
+    const rating = await callOrSkip402(ctx, () => client.analyst.getRatingsSnapshot("AAPL"));
+    if (!rating) return;
+    expect(Array.isArray(rating)).toBe(true);
+  }, 20_000);
+
+  it("directory.searchSymbol finds AAPL", async (ctx) => {
+    const results = await callOrSkip402(ctx, () => client.directory.searchSymbol("AAPL", 5));
+    if (!results) return;
+    expect(Array.isArray(results)).toBe(true);
+    expect(results.length).toBeGreaterThan(0);
+  }, 20_000);
+
+  it("directory.getAvailableExchanges returns a list", async (ctx) => {
+    const exchanges = await callOrSkip402(ctx, () =>
+      client.directory.getAvailableExchanges(),
+    );
+    if (!exchanges) return;
+    expect(Array.isArray(exchanges)).toBe(true);
+    expect(exchanges.length).toBeGreaterThan(0);
+  }, 20_000);
 });

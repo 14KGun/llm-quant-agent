@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import type { HttpClient } from "../http.js";
+import { AnalystResource } from "./analyst.js";
+import { CalendarResource } from "./calendar.js";
 import { CompanyResource } from "./company.js";
+import { DirectoryResource } from "./directory.js";
 import { EconomicResource } from "./economic.js";
 import { FinancialsResource } from "./financials.js";
 import { MarketResource } from "./market.js";
@@ -173,5 +176,94 @@ describe("EconomicResource", () => {
 
     const paths = get.mock.calls.map((call) => call[0]);
     expect(paths).toEqual(["treasury-rates", "economic-calendar", "market-risk-premium"]);
+  });
+});
+
+describe("CalendarResource", () => {
+  it("maps calendar methods to their endpoint paths with date range", async () => {
+    const { http, get } = stubHttp([]);
+    const calendar = new CalendarResource(http);
+    await calendar.getEarningsCalendar({ from: "2024-01-01", to: "2024-01-31" });
+    await calendar.getDividendsCalendar();
+    await calendar.getIPOCalendar();
+    await calendar.getStockSplitsCalendar();
+
+    const paths = get.mock.calls.map((call) => call[0]);
+    expect(paths).toEqual([
+      "earnings-calendar",
+      "dividends-calendar",
+      "ipos-calendar",
+      "splits-calendar",
+    ]);
+    expect(get).toHaveBeenNthCalledWith(1, "earnings-calendar", {
+      from: "2024-01-01",
+      to: "2024-01-31",
+    });
+  });
+});
+
+describe("AnalystResource", () => {
+  it("getEstimates forwards symbol, period and pagination", async () => {
+    const { http, get } = stubHttp([]);
+    await new AnalystResource(http).getEstimates("AAPL", { period: "annual", limit: 5 });
+    expect(get).toHaveBeenCalledWith("analyst-estimates", {
+      symbol: "AAPL",
+      period: "annual",
+      page: undefined,
+      limit: 5,
+    });
+  });
+
+  it("maps analyst methods to their endpoint paths", async () => {
+    const { http, get } = stubHttp([]);
+    const analyst = new AnalystResource(http);
+    await analyst.getPriceTargetSummary("AAPL");
+    await analyst.getPriceTargetConsensus("AAPL");
+    await analyst.getRatingsSnapshot("AAPL");
+    await analyst.getHistoricalRatings("AAPL", 10);
+    await analyst.getGrades("AAPL");
+    await analyst.getGradesConsensus("AAPL");
+
+    const paths = get.mock.calls.map((call) => call[0]);
+    expect(paths).toEqual([
+      "price-target-summary",
+      "price-target-consensus",
+      "ratings-snapshot",
+      "ratings-historical",
+      "grades",
+      "grades-consensus",
+    ]);
+    expect(get).toHaveBeenNthCalledWith(4, "ratings-historical", { symbol: "AAPL", limit: 10 });
+  });
+});
+
+describe("DirectoryResource", () => {
+  it("search methods forward query and limit", async () => {
+    const { http, get } = stubHttp([]);
+    const directory = new DirectoryResource(http);
+    await directory.searchSymbol("AAP", 5);
+    await directory.searchByName("Apple");
+
+    expect(get).toHaveBeenNthCalledWith(1, "search-symbol", { query: "AAP", limit: 5 });
+    expect(get).toHaveBeenNthCalledWith(2, "search-name", { query: "Apple", limit: undefined });
+  });
+
+  it("maps directory list methods to their endpoint paths", async () => {
+    const { http, get } = stubHttp([]);
+    const directory = new DirectoryResource(http);
+    await directory.getStockList();
+    await directory.getETFList();
+    await directory.getAvailableExchanges();
+    await directory.getAvailableSectors();
+    await directory.getAvailableIndustries();
+
+    const paths = get.mock.calls.map((call) => call[0]);
+    expect(paths).toEqual([
+      "stock-list",
+      "etf-list",
+      "available-exchanges",
+      "available-sectors",
+      "available-industries",
+    ]);
   });
 });
