@@ -5,6 +5,25 @@ import { FmpApiError } from "./errors.js";
 const apiKey = process.env.FMP_API_KEY;
 
 /**
+ * 호출을 실행하되, 상위 플랜 전용 엔드포인트의 402(Restricted)는
+ * 실패가 아니라 런타임 skip 으로 처리한다. 그 외 에러는 전파.
+ */
+async function callOrSkip402<T>(
+  ctx: { skip: () => void },
+  fn: () => Promise<T>,
+): Promise<T | undefined> {
+  try {
+    return await fn();
+  } catch (err) {
+    if (err instanceof FmpApiError && err.status === 402) {
+      ctx.skip();
+      return undefined;
+    }
+    throw err;
+  }
+}
+
+/**
  * 실제 FMP API를 호출하는 통합 테스트.
  * FMP_API_KEY 가 설정된 환경(CI secret 등)에서만 실행되고, 없으면 스킵된다.
  * Phase 2 리소스 메서드의 실제 엔드포인트 경로를 검증한다.
@@ -72,5 +91,46 @@ describe.skipIf(!apiKey)("FMP API integration", () => {
     expect(Array.isArray(metrics)).toBe(true);
     expect(metrics.length).toBeGreaterThan(0);
     expect(metrics[0]!.symbol).toBe("AAPL");
+  }, 20_000);
+
+  // --- Phase 3: News / Market / Economic (402는 skip) ---
+
+  it("news.getGeneralNews returns articles", async (ctx) => {
+    const news = await callOrSkip402(ctx, () => client.news.getGeneralNews({ limit: 5 }));
+    if (!news) return;
+    expect(Array.isArray(news)).toBe(true);
+  }, 20_000);
+
+  it("news.getStockNews returns AAPL articles", async (ctx) => {
+    const news = await callOrSkip402(ctx, () =>
+      client.news.getStockNews({ symbols: ["AAPL"], limit: 5 }),
+    );
+    if (!news) return;
+    expect(Array.isArray(news)).toBe(true);
+  }, 20_000);
+
+  it("market.getGainers returns movers", async (ctx) => {
+    const movers = await callOrSkip402(ctx, () => client.market.getGainers());
+    if (!movers) return;
+    expect(Array.isArray(movers)).toBe(true);
+    expect(movers.length).toBeGreaterThan(0);
+  }, 20_000);
+
+  it("economic.getTreasuryRates returns rates", async (ctx) => {
+    const rates = await callOrSkip402(ctx, () =>
+      client.economic.getTreasuryRates({ from: "2024-01-01", to: "2024-01-31" }),
+    );
+    if (!rates) return;
+    expect(Array.isArray(rates)).toBe(true);
+    expect(rates.length).toBeGreaterThan(0);
+  }, 20_000);
+
+  it("economic.getEconomicIndicator(GDP) returns a series", async (ctx) => {
+    const series = await callOrSkip402(ctx, () =>
+      client.economic.getEconomicIndicator("GDP", { from: "2022-01-01", to: "2024-01-01" }),
+    );
+    if (!series) return;
+    expect(Array.isArray(series)).toBe(true);
+    expect(series.length).toBeGreaterThan(0);
   }, 20_000);
 });
