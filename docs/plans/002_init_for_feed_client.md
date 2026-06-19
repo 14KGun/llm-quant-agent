@@ -95,10 +95,12 @@ FMP API 카테고리를 에이전트 활용도 기준으로 9개 도메인으로
 - [x] 단위 테스트 (config / URL 빌더 / 재시도 / 에러 처리)
 
 ### Phase 2 — 핵심 도메인 (Scraper MVP) ⭐
-- [ ] Quotes (`getQuote` / `getQuoteShort` / `getBatchQuotes` / `getHistoricalPrice`)
-- [ ] Company (`getProfile`)
-- [ ] Financial Statements (income / balance / cashflow / ratios / keyMetrics)
-- [ ] 응답 타입을 `@llm-quant/types`(`market.ts`)와 정합
+- [x] Quotes (`getQuote` / `getQuoteShort` / `getBatchQuotes` / `getHistoricalPrice`)
+- [x] Company (`getProfile`)
+- [x] Financial Statements (income / balance / cashflow / ratios / keyMetrics)
+- [x] 응답 타입 정의 (우선 feed-client 내부 `src/types/`; `@llm-quant/types`
+  추출은 패키지 신설 시 후속 작업으로 이관)
+- [x] 리소스별 단위 테스트 + 실제 엔드포인트 통합 테스트(CI)
 
 ### Phase 3 — News & Market & Economic
 - [ ] News 모듈 (stock/general/press-release/articles)

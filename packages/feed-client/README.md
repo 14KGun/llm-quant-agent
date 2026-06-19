@@ -3,14 +3,15 @@
 Financial Modeling Prep (FMP) API를 감싸는 타입 안전 SDK. Scraper 에이전트가 시세 ·
 재무제표 · 뉴스 · 경제지표를 수집하는 데 사용한다.
 
-## 현재 상태 (Phase 1)
+## 현재 상태 (Phase 2)
 
-HTTP 코어만 구현된 상태다. 도메인별 메서드(quotes / financials / news / ...)는
-이후 Phase에서 추가된다.
+HTTP 코어 + 핵심 도메인 리소스(Quotes / Company / Financials)가 구현된 상태다.
+News / Market / Economic 등은 이후 Phase에서 추가된다.
 
-- `FeedClient` — apikey · baseUrl 주입, 설정 검증
+- `FeedClient` — apikey · baseUrl 주입, 설정 검증, 리소스 노출
 - `HttpClient` — URL 빌더(apikey 자동 주입), 타임아웃, 429/5xx · 네트워크 오류 지수 백오프 재시도
 - `FmpError` / `FmpConfigError` / `FmpApiError` — 에러 계층
+- 리소스: `client.quotes` / `client.company` / `client.financials`
 
 ## 사용 예시
 
@@ -20,11 +21,28 @@ import { FeedClient } from "@llm-quant/feed-client";
 // apiKey 미지정 시 FMP_API_KEY 환경변수를 사용한다.
 const client = new FeedClient({ apiKey: process.env.FMP_API_KEY });
 
-// Phase 1: 제네릭 요청. 이후 Phase에서 client.quotes.getQuote(...) 형태로 확장.
-const quote = await client.request<Array<{ symbol: string; price: number }>>("quote", {
-  symbol: "AAPL",
-});
+// 시세
+const quote = await client.quotes.getQuote("AAPL");
+const candles = await client.quotes.getHistoricalPrice("AAPL", { from: "2024-01-01" });
+
+// 기업 정보
+const profile = await client.company.getProfile("AAPL");
+
+// 재무제표
+const income = await client.financials.getIncomeStatement("AAPL", { period: "quarter", limit: 4 });
+const metrics = await client.financials.getKeyMetrics("AAPL");
+
+// 아직 리소스가 없는 엔드포인트는 제네릭 request 사용
+const news = await client.request<unknown[]>("news/general-latest", { limit: 5 });
 ```
+
+## 리소스 메서드
+
+| 리소스 | 메서드 |
+|---|---|
+| `quotes` | `getQuote` · `getQuoteShort` · `getBatchQuotes` · `getHistoricalPrice` |
+| `company` | `getProfile` |
+| `financials` | `getIncomeStatement` · `getBalanceSheet` · `getCashFlow` · `getRatios` · `getKeyMetrics` |
 
 ## 설정 옵션
 
