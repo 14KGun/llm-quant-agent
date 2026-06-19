@@ -2,11 +2,12 @@
   "name": "llm-quant-agent",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@10.11.0",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "turbo run build",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
