@@ -8,3 +8,9 @@ export interface StatementQuery {
   /** 반환할 기간 수. */
   limit?: number;
 }
+
+/** 기간(from~to) 범위 쿼리. 날짜는 YYYY-MM-DD. */
+export interface DateRangeQuery {
+  from?: string;
+  to?: string;
+}

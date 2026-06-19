@@ -1,7 +1,10 @@
 import { resolveConfig, type FeedClientConfig, type ResolvedConfig } from "./config.js";
 import { HttpClient, type QueryParams } from "./http.js";
 import { CompanyResource } from "./resources/company.js";
+import { EconomicResource } from "./resources/economic.js";
 import { FinancialsResource } from "./resources/financials.js";
+import { MarketResource } from "./resources/market.js";
+import { NewsResource } from "./resources/news.js";
 import { QuotesResource } from "./resources/quotes.js";
 
 /**
@@ -26,6 +29,12 @@ export class FeedClient {
   readonly company: CompanyResource;
   /** 재무제표 / 비율 / 지표 엔드포인트. */
   readonly financials: FinancialsResource;
+  /** 뉴스 엔드포인트. */
+  readonly news: NewsResource;
+  /** 시장 데이터 엔드포인트. */
+  readonly market: MarketResource;
+  /** 경제지표 엔드포인트. */
+  readonly economic: EconomicResource;
   private readonly config: ResolvedConfig;
 
   constructor(config: FeedClientConfig = {}) {
@@ -34,6 +43,9 @@ export class FeedClient {
     this.quotes = new QuotesResource(this.http);
     this.company = new CompanyResource(this.http);
     this.financials = new FinancialsResource(this.http);
+    this.news = new NewsResource(this.http);
+    this.market = new MarketResource(this.http);
+    this.economic = new EconomicResource(this.http);
   }
 
   /** Issue a typed GET request against an FMP endpoint path. */

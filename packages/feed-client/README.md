@@ -3,15 +3,16 @@
 Financial Modeling Prep (FMP) API를 감싸는 타입 안전 SDK. Scraper 에이전트가 시세 ·
 재무제표 · 뉴스 · 경제지표를 수집하는 데 사용한다.
 
-## 현재 상태 (Phase 2)
+## 현재 상태 (Phase 3)
 
-HTTP 코어 + 핵심 도메인 리소스(Quotes / Company / Financials)가 구현된 상태다.
-News / Market / Economic 등은 이후 Phase에서 추가된다.
+HTTP 코어 + 도메인 리소스(Quotes / Company / Financials / News / Market / Economic)가
+구현된 상태다. Calendars / Analyst / Search 등은 이후 Phase에서 추가된다.
 
 - `FeedClient` — apikey · baseUrl 주입, 설정 검증, 리소스 노출
 - `HttpClient` — URL 빌더(apikey 자동 주입), 타임아웃, 429/5xx · 네트워크 오류 지수 백오프 재시도
 - `FmpError` / `FmpConfigError` / `FmpApiError` — 에러 계층
-- 리소스: `client.quotes` / `client.company` / `client.financials`
+- 리소스: `client.quotes` / `client.company` / `client.financials` / `client.news` /
+  `client.market` / `client.economic`
 
 ## 사용 예시
 
@@ -43,6 +44,9 @@ const news = await client.request<unknown[]>("news/general-latest", { limit: 5 }
 | `quotes` | `getQuote` · `getQuoteShort` · `getBatchQuotes`¹ · `getHistoricalPrice` |
 | `company` | `getProfile` |
 | `financials` | `getIncomeStatement` · `getBalanceSheet` · `getCashFlow` · `getRatios` · `getKeyMetrics` |
+| `news` | `getStockNews` · `getGeneralNews` · `getPressReleases` · `getArticles` · `getCryptoNews` · `getForexNews` |
+| `market` | `getGainers` · `getLosers` · `getMostActive` · `getSectorPerformance` · `getMarketHours` |
+| `economic` | `getTreasuryRates` · `getEconomicIndicator` · `getEconomicCalendar` · `getMarketRiskPremium` |
 
 > ¹ `getBatchQuotes`(`batch-quote`)는 FMP 상위 구독 플랜 전용. 하위 플랜에서는 402(Restricted)가 반환되며, 통합 테스트는 402일 때 실패 대신 자동 skip 처리한다.
 

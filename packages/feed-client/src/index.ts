@@ -16,9 +16,12 @@ export type { FmpApiErrorOptions } from "./errors.js";
 export { QuotesResource } from "./resources/quotes.js";
 export { CompanyResource } from "./resources/company.js";
 export { FinancialsResource } from "./resources/financials.js";
+export { NewsResource } from "./resources/news.js";
+export { MarketResource } from "./resources/market.js";
+export { EconomicResource } from "./resources/economic.js";
 
 // Response types
-export type { ReportingPeriod, StatementQuery } from "./types/common.js";
+export type { ReportingPeriod, StatementQuery, DateRangeQuery } from "./types/common.js";
 export type {
   Quote,
   QuoteShort,
@@ -34,3 +37,18 @@ export type {
   FinancialRatios,
   KeyMetrics,
 } from "./types/financial.js";
+export type {
+  NewsArticle,
+  FmpArticle,
+  NewsQuery,
+  SymbolNewsQuery,
+  ArticlesQuery,
+} from "./types/news.js";
+export type { MarketMover, SectorPerformance, MarketHours } from "./types/market.js";
+export type {
+  TreasuryRate,
+  EconomicIndicatorName,
+  EconomicIndicator,
+  EconomicCalendarEvent,
+  MarketRiskPremium,
+} from "./types/economic.js";

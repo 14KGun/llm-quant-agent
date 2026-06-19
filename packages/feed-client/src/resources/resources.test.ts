@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import type { HttpClient } from "../http.js";
 import { CompanyResource } from "./company.js";
+import { EconomicResource } from "./economic.js";
 import { FinancialsResource } from "./financials.js";
+import { MarketResource } from "./market.js";
+import { NewsResource } from "./news.js";
 import { QuotesResource } from "./quotes.js";
 
 function stubHttp(result: unknown) {
@@ -82,5 +85,93 @@ describe("FinancialsResource", () => {
       "ratios",
       "key-metrics",
     ]);
+  });
+});
+
+describe("NewsResource", () => {
+  it("getStockNews forwards symbols and pagination", async () => {
+    const { http, get } = stubHttp([]);
+    await new NewsResource(http).getStockNews({
+      symbols: ["AAPL", "MSFT"],
+      from: "2024-01-01",
+      limit: 10,
+    });
+    expect(get).toHaveBeenCalledWith("news/stock", {
+      symbols: ["AAPL", "MSFT"],
+      from: "2024-01-01",
+      to: undefined,
+      page: undefined,
+      limit: 10,
+    });
+  });
+
+  it("maps news methods to their endpoint paths", async () => {
+    const { http, get } = stubHttp([]);
+    const news = new NewsResource(http);
+    await news.getGeneralNews();
+    await news.getPressReleases({ symbols: ["AAPL"] });
+    await news.getArticles();
+    await news.getCryptoNews();
+    await news.getForexNews();
+
+    const paths = get.mock.calls.map((call) => call[0]);
+    expect(paths).toEqual([
+      "news/general-latest",
+      "news/press-releases",
+      "fmp-articles",
+      "news/crypto-latest",
+      "news/forex-latest",
+    ]);
+  });
+});
+
+describe("MarketResource", () => {
+  it("maps mover methods to their endpoint paths", async () => {
+    const { http, get } = stubHttp([]);
+    const market = new MarketResource(http);
+    await market.getGainers();
+    await market.getLosers();
+    await market.getMostActive();
+
+    const paths = get.mock.calls.map((call) => call[0]);
+    expect(paths).toEqual(["biggest-gainers", "biggest-losers", "most-actives"]);
+  });
+
+  it("getSectorPerformance and getMarketHours forward params", async () => {
+    const { http, get } = stubHttp([]);
+    const market = new MarketResource(http);
+    await market.getSectorPerformance("2024-06-03");
+    await market.getMarketHours("NASDAQ");
+
+    expect(get).toHaveBeenNthCalledWith(1, "sector-performance-snapshot", {
+      date: "2024-06-03",
+    });
+    expect(get).toHaveBeenNthCalledWith(2, "exchange-market-hours", { exchange: "NASDAQ" });
+  });
+});
+
+describe("EconomicResource", () => {
+  it("getEconomicIndicator forwards name and date range", async () => {
+    const { http, get } = stubHttp([]);
+    await new EconomicResource(http).getEconomicIndicator("GDP", {
+      from: "2023-01-01",
+      to: "2024-01-01",
+    });
+    expect(get).toHaveBeenCalledWith("economic-indicators", {
+      name: "GDP",
+      from: "2023-01-01",
+      to: "2024-01-01",
+    });
+  });
+
+  it("maps economic methods to their endpoint paths", async () => {
+    const { http, get } = stubHttp([]);
+    const economic = new EconomicResource(http);
+    await economic.getTreasuryRates();
+    await economic.getEconomicCalendar();
+    await economic.getMarketRiskPremium();
+
+    const paths = get.mock.calls.map((call) => call[0]);
+    expect(paths).toEqual(["treasury-rates", "economic-calendar", "market-risk-premium"]);
   });
 });

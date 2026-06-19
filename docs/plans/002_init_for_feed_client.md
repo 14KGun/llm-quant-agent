@@ -102,10 +102,11 @@ FMP API 카테고리를 에이전트 활용도 기준으로 9개 도메인으로
   추출은 패키지 신설 시 후속 작업으로 이관)
 - [x] 리소스별 단위 테스트 + 실제 엔드포인트 통합 테스트(CI)
 
-### Phase 3 — News & Market & Economic
-- [ ] News 모듈 (stock/general/press-release/articles)
-- [ ] Market Data 모듈 (gainers/losers/active, sector performance, market hours, index)
-- [ ] Economic Data 모듈 (treasury, indicators, economic calendar)
+### Phase 3 — News & Market & Economic ✅
+- [x] News 모듈 (stock/general/press-release/articles/crypto/forex)
+- [x] Market Data 모듈 (gainers/losers/active, sector performance, market hours)
+- [x] Economic Data 모듈 (treasury, indicators, economic calendar, risk premium)
+- [x] 리소스별 단위 테스트 + 실제 엔드포인트 통합 테스트(402는 skip)
 
 ### Phase 4 — Calendars / Analyst / Search
 - [ ] Calendars (earnings/dividends/ipo/splits)
