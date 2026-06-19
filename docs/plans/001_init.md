@@ -48,6 +48,14 @@ llm-quant-agent/
     │       ├── trader/             # 토스증권 주문 + 안전장치
     │       └── index.ts
     │
+    ├── trading-client/             # @llm-quant/trading-client
+    │   └── src/
+    │       └── index.ts            # 토스증권 Open API SDK
+    │
+    ├── feed-client/                # @llm-quant/feed-client
+    │   └── src/
+    │       └── index.ts            # FMP 경제뉴스 & 시장 데이터 SDK
+    │
     └── types/                      # @llm-quant/types
         └── src/
             ├── market.ts           # ScraperOutput, MarketData, NewsItem
@@ -60,6 +68,8 @@ llm-quant-agent/
 
 ```
 apps/api  →  packages/agents  →  packages/types
+                               →  packages/trading-client
+                               →  packages/feed-client
 apps/web  →  (apps/api REST API)
 ```
 
