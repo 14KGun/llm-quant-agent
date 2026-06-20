@@ -115,10 +115,10 @@ FMP API 카테고리를 에이전트 활용도 기준으로 9개 도메인으로
 - [x] 리소스별 단위 테스트 + 실제 엔드포인트 통합 테스트(402는 skip)
 
 ### Phase 5 — 견고성 & 문서화
-- [ ] 모듈별 unit test (fetch mocking)
-- [ ] 인메모리 캐싱 옵션(시세 단기 TTL) / 동시 요청 제한
-- [ ] README(사용 예시) + JSDoc
-- [ ] `packages/agents/scraper` 연동 스모크 테스트
+- [x] 모듈별 unit test (fetch mocking)
+- [x] 인메모리 캐싱 옵션(`cacheTtlMs`, TTL lazy eviction) / 동시 요청 제한(`maxConcurrentRequests`, 세마포어)
+- [x] README(사용 예시) + JSDoc
+- [ ] `packages/agents/scraper` 연동 스모크 테스트 — `packages/agents` 패키지 신설 후 진행(현재 미존재로 보류)
 
 ## 참고
 - FMP Docs: https://site.financialmodelingprep.com/developer/docs

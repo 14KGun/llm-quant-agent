@@ -93,3 +93,61 @@ describe("HttpClient.get", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(2); // initial + 1 retry
   });
 });
+
+describe("HttpClient caching", () => {
+  it("does not cache by default", async () => {
+    const fetchImpl = vi.fn().mockImplementation(async () => jsonResponse([]));
+    const client = makeClient(fetchImpl);
+    await client.get("quote", { symbol: "AAPL" });
+    await client.get("quote", { symbol: "AAPL" });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it("serves identical requests from cache when cacheTtlMs > 0", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse([{ ok: true }]));
+    const client = makeClient(fetchImpl, { cacheTtlMs: 1000 });
+    const a = await client.get("quote", { symbol: "AAPL" });
+    const b = await client.get("quote", { symbol: "AAPL" });
+    expect(a).toEqual(b);
+    expect(fetchImpl).toHaveBeenCalledOnce();
+  });
+
+  it("keys the cache by params (order-independent)", async () => {
+    const fetchImpl = vi.fn().mockImplementation(async () => jsonResponse([]));
+    const client = makeClient(fetchImpl, { cacheTtlMs: 1000 });
+    await client.get("quote", { symbol: "AAPL", limit: 5 });
+    await client.get("quote", { limit: 5, symbol: "AAPL" }); // same key
+    await client.get("quote", { symbol: "MSFT" }); // different key
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it("clearCache forces a refetch", async () => {
+    const fetchImpl = vi.fn().mockImplementation(async () => jsonResponse([]));
+    const client = makeClient(fetchImpl, { cacheTtlMs: 1000 });
+    await client.get("quote");
+    client.clearCache();
+    await client.get("quote");
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("HttpClient concurrency", () => {
+  it("never exceeds maxConcurrentRequests in-flight", async () => {
+    let active = 0;
+    let maxActive = 0;
+    const fetchImpl = vi.fn().mockImplementation(async () => {
+      active++;
+      maxActive = Math.max(maxActive, active);
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      active--;
+      return jsonResponse([]);
+    });
+    const client = makeClient(fetchImpl, { maxConcurrentRequests: 2 });
+
+    await Promise.all(
+      Array.from({ length: 6 }, (_, i) => client.get("quote", { i })),
+    );
+    expect(maxActive).toBe(2);
+    expect(fetchImpl).toHaveBeenCalledTimes(6);
+  });
+});

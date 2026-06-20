@@ -11,6 +11,8 @@ export {
 export type { FeedClientConfig, ResolvedConfig } from "./config.js";
 export { FmpError, FmpConfigError, FmpApiError } from "./errors.js";
 export type { FmpApiErrorOptions } from "./errors.js";
+export { TtlCache } from "./cache.js";
+export { Semaphore } from "./semaphore.js";
 
 // Resources
 export { QuotesResource } from "./resources/quotes.js";

@@ -12,6 +12,16 @@ export interface FeedClientConfig {
   maxRetries?: number;
   /** Base delay (ms) for exponential backoff between retries. Defaults to 500. */
   retryBaseDelayMs?: number;
+  /**
+   * 성공 응답을 캐시할 TTL(ms). 0/미지정이면 캐시 비활성화.
+   * 시세처럼 단기간 동일 요청이 반복될 때 중복 호출을 줄인다.
+   */
+  cacheTtlMs?: number;
+  /**
+   * 동시 in-flight 요청 수 상한. 0/미지정이면 무제한.
+   * FMP 레이트리밋 회피용.
+   */
+  maxConcurrentRequests?: number;
   /** Inject a custom fetch implementation (useful for tests). */
   fetch?: typeof fetch;
 }
@@ -23,6 +33,8 @@ export interface ResolvedConfig {
   timeoutMs: number;
   maxRetries: number;
   retryBaseDelayMs: number;
+  cacheTtlMs: number;
+  maxConcurrentRequests: number;
   fetch: typeof fetch;
 }
 
@@ -53,6 +65,8 @@ export function resolveConfig(config: FeedClientConfig = {}): ResolvedConfig {
     timeoutMs: config.timeoutMs ?? DEFAULT_TIMEOUT_MS,
     maxRetries: config.maxRetries ?? DEFAULT_MAX_RETRIES,
     retryBaseDelayMs: config.retryBaseDelayMs ?? DEFAULT_RETRY_BASE_DELAY_MS,
+    cacheTtlMs: config.cacheTtlMs ?? 0,
+    maxConcurrentRequests: config.maxConcurrentRequests ?? 0,
     fetch: fetchImpl,
   };
 }
