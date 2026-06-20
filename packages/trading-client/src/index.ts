@@ -7,11 +7,18 @@ export {
   DEFAULT_TIMEOUT_MS,
   DEFAULT_MAX_RETRIES,
   DEFAULT_RETRY_BASE_DELAY_MS,
+  DEFAULT_TOKEN_REFRESH_MARGIN_MS,
 } from "./config.js";
 export type { TradingClientConfig, ResolvedConfig } from "./config.js";
 export { TossError, TossConfigError, TossApiError } from "./errors.js";
 export type { TossApiErrorOptions } from "./errors.js";
 export { StaticTokenProvider } from "./token.js";
 export type { TokenProvider } from "./token.js";
+export {
+  OAuthTokenProvider,
+  DEFAULT_TOKEN_PATH,
+  DEFAULT_REFRESH_MARGIN_MS,
+} from "./oauth.js";
+export type { OAuthTokenProviderOptions } from "./oauth.js";
 export { TtlCache } from "./cache.js";
 export { Semaphore } from "./semaphore.js";

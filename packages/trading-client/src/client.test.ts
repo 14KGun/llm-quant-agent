@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
 import { TradingClient, createTradingClient } from "./client.js";
-import { TossConfigError } from "./errors.js";
 import { StaticTokenProvider } from "./token.js";
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -25,11 +24,21 @@ describe("TradingClient", () => {
     expect((init.headers as Record<string, string>).Authorization).toBe("Bearer tok");
   });
 
-  it("defers token issuance to Phase 2 when only credentials are given", async () => {
-    const fetchImpl = vi.fn();
+  it("issues a token from credentials via OAuth, then injects it as Bearer", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({ access_token: "issued", token_type: "Bearer", expires_in: 3600 }),
+      )
+      .mockResolvedValueOnce(jsonResponse({ result: [{ symbol: "005930" }] }));
     const client = new TradingClient({ clientId: "c", clientSecret: "s", fetch: fetchImpl });
-    await expect(client.request("api/v1/stocks")).rejects.toBeInstanceOf(TossConfigError);
-    expect(fetchImpl).not.toHaveBeenCalled();
+    const data = await client.request("api/v1/stocks");
+    expect(data).toEqual([{ symbol: "005930" }]);
+    // 1) 토큰 발급 호출 → 2) 발급된 토큰으로 데이터 호출
+    const tokenUrl = fetchImpl.mock.calls[0]![0] as string;
+    expect(tokenUrl).toContain("/oauth2/token");
+    const dataInit = fetchImpl.mock.calls[1]![1] as RequestInit;
+    expect((dataInit.headers as Record<string, string>).Authorization).toBe("Bearer issued");
   });
 
   it("accepts an injected token provider", async () => {
