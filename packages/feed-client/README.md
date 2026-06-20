@@ -3,13 +3,14 @@
 Financial Modeling Prep (FMP) API를 감싸는 타입 안전 SDK. Scraper 에이전트가 시세 ·
 재무제표 · 뉴스 · 경제지표를 수집하는 데 사용한다.
 
-## 현재 상태 (Phase 4)
+## 현재 상태 (Phase 5)
 
 HTTP 코어 + 도메인 리소스(Quotes / Company / Financials / News / Market / Economic /
-Calendar / Analyst / Directory)가 구현된 상태다.
+Calendar / Analyst / Directory) + 캐싱/동시성 제어가 구현된 상태다.
 
 - `FeedClient` — apikey · baseUrl 주입, 설정 검증, 리소스 노출
-- `HttpClient` — URL 빌더(apikey 자동 주입), 타임아웃, 429/5xx · 네트워크 오류 지수 백오프 재시도
+- `HttpClient` — URL 빌더(apikey 자동 주입), 타임아웃, 429/5xx · 네트워크 오류 지수 백오프 재시도,
+  TTL 캐싱(opt-in), 동시 요청 제한(opt-in)
 - `FmpError` / `FmpConfigError` / `FmpApiError` — 에러 계층
 - 리소스: `client.quotes` / `client.company` / `client.financials` / `client.news` /
   `client.market` / `client.economic` / `client.calendar` / `client.analyst` /
@@ -63,7 +64,27 @@ const news = await client.request<unknown[]>("news/general-latest", { limit: 5 }
 | `timeoutMs` | `10000` | 요청별 타임아웃 |
 | `maxRetries` | `3` | 일시적 오류 재시도 횟수 |
 | `retryBaseDelayMs` | `500` | 지수 백오프 기본 지연 |
+| `cacheTtlMs` | `0`(비활성) | 성공 응답 캐시 TTL(ms). 단기 중복 호출 절감 |
+| `maxConcurrentRequests` | `0`(무제한) | 동시 in-flight 요청 상한(레이트리밋 회피) |
 | `fetch` | `globalThis.fetch` | 커스텀 fetch 구현(테스트용) |
+
+## 캐싱 & 동시성
+
+```ts
+// 시세를 5초간 캐시하고, 동시 요청을 4개로 제한
+const client = new FeedClient({
+  apiKey: process.env.FMP_API_KEY,
+  cacheTtlMs: 5_000,
+  maxConcurrentRequests: 4,
+});
+
+await client.quotes.getQuote("AAPL"); // 실제 호출
+await client.quotes.getQuote("AAPL"); // 5초 내 동일 요청은 캐시에서 반환
+client.clearCache();                  // 캐시 비우기
+```
+
+- 캐시 키는 엔드포인트 경로 + 파라미터 기준(순서 무관, apikey 무관).
+- 캐시는 성공 응답만 저장하며, 만료는 조회 시점 lazy eviction.
 
 ## 스크립트
 

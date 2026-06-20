@@ -65,6 +65,11 @@ export class FeedClient {
     return this.http.get<T>(path, params);
   }
 
+  /** Clear cached responses (no-op when caching is disabled). */
+  clearCache(): void {
+    this.http.clearCache();
+  }
+
   /** Resolved base URL the client is pointed at (api key omitted). */
   get baseUrl(): string {
     return this.config.baseUrl;
