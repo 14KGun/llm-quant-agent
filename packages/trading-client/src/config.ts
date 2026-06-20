@@ -3,13 +3,13 @@ import type { TokenProvider } from "./token.js";
 
 /** User-supplied configuration for {@link TradingClient}. */
 export interface TradingClientConfig {
-  /** OAuth 2.0 client id. Falls back to the `TOSS_CLIENT_ID` environment variable. */
+  /** OAuth 2.0 client id. Falls back to the `TOSSINVEST_API_KEY` environment variable. */
   clientId?: string;
-  /** OAuth 2.0 client secret. Falls back to the `TOSS_CLIENT_SECRET` environment variable. */
+  /** OAuth 2.0 client secret. Falls back to the `TOSSINVEST_SECRET_KEY` environment variable. */
   clientSecret?: string;
   /**
    * 미리 발급된 액세스 토큰. 전달 시 OAuth 발급 과정을 건너뛴다(테스트/Phase 1).
-   * `TOSS_ACCESS_TOKEN` 환경변수로도 주입할 수 있다.
+   * `TOSSINVEST_ACCESS_TOKEN` 환경변수로도 주입할 수 있다.
    */
   accessToken?: string;
   /**
@@ -66,16 +66,16 @@ export const DEFAULT_RETRY_BASE_DELAY_MS = 500;
 
 /** Validate and merge user config with defaults and environment variables. */
 export function resolveConfig(config: TradingClientConfig = {}): ResolvedConfig {
-  const clientId = config.clientId ?? process.env.TOSS_CLIENT_ID;
-  const clientSecret = config.clientSecret ?? process.env.TOSS_CLIENT_SECRET;
-  const accessToken = config.accessToken ?? process.env.TOSS_ACCESS_TOKEN;
+  const clientId = config.clientId ?? process.env.TOSSINVEST_API_KEY;
+  const clientSecret = config.clientSecret ?? process.env.TOSSINVEST_SECRET_KEY;
+  const accessToken = config.accessToken ?? process.env.TOSSINVEST_ACCESS_TOKEN;
 
   // 토큰 공급자를 직접 주입했거나, 미리 발급된 토큰이 있거나,
   // client_id + client_secret 한 쌍이 있어야 한다.
   const hasCredentials = Boolean(clientId && clientSecret);
   if (!config.tokenProvider && !accessToken && !hasCredentials) {
     throw new TossConfigError(
-      "토스증권 인증 정보가 필요합니다. `clientId`+`clientSecret` (또는 TOSS_CLIENT_ID/TOSS_CLIENT_SECRET), " +
+      "토스증권 인증 정보가 필요합니다. `clientId`+`clientSecret` (또는 TOSSINVEST_API_KEY/TOSSINVEST_SECRET_KEY), " +
         "`accessToken`, 또는 `tokenProvider` 중 하나를 제공하세요.",
     );
   }

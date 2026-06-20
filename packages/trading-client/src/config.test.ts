@@ -4,15 +4,15 @@ import { TossConfigError } from "./errors.js";
 
 describe("resolveConfig", () => {
   const original = {
-    id: process.env.TOSS_CLIENT_ID,
-    secret: process.env.TOSS_CLIENT_SECRET,
-    token: process.env.TOSS_ACCESS_TOKEN,
+    id: process.env.TOSSINVEST_API_KEY,
+    secret: process.env.TOSSINVEST_SECRET_KEY,
+    token: process.env.TOSSINVEST_ACCESS_TOKEN,
   };
 
   afterEach(() => {
-    restore("TOSS_CLIENT_ID", original.id);
-    restore("TOSS_CLIENT_SECRET", original.secret);
-    restore("TOSS_ACCESS_TOKEN", original.token);
+    restore("TOSSINVEST_API_KEY", original.id);
+    restore("TOSSINVEST_SECRET_KEY", original.secret);
+    restore("TOSSINVEST_ACCESS_TOKEN", original.token);
   });
 
   it("applies defaults when an access token is given", () => {
@@ -32,16 +32,16 @@ describe("resolveConfig", () => {
 
   it("reads credentials from the environment", () => {
     clearAuthEnv();
-    process.env.TOSS_CLIENT_ID = "env-id";
-    process.env.TOSS_CLIENT_SECRET = "env-secret";
+    process.env.TOSSINVEST_API_KEY = "env-id";
+    process.env.TOSSINVEST_SECRET_KEY = "env-secret";
     const config = resolveConfig();
     expect(config.clientId).toBe("env-id");
     expect(config.clientSecret).toBe("env-secret");
   });
 
-  it("reads the access token from TOSS_ACCESS_TOKEN", () => {
+  it("reads the access token from TOSSINVEST_ACCESS_TOKEN", () => {
     clearAuthEnv();
-    process.env.TOSS_ACCESS_TOKEN = "env-tok";
+    process.env.TOSSINVEST_ACCESS_TOKEN = "env-tok";
     expect(resolveConfig().accessToken).toBe("env-tok");
   });
 
@@ -68,9 +68,9 @@ describe("resolveConfig", () => {
 });
 
 function clearAuthEnv(): void {
-  delete process.env.TOSS_CLIENT_ID;
-  delete process.env.TOSS_CLIENT_SECRET;
-  delete process.env.TOSS_ACCESS_TOKEN;
+  delete process.env.TOSSINVEST_API_KEY;
+  delete process.env.TOSSINVEST_SECRET_KEY;
+  delete process.env.TOSSINVEST_ACCESS_TOKEN;
 }
 
 function restore(key: string, value: string | undefined): void {

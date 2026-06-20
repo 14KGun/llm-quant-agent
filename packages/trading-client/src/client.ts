@@ -14,7 +14,7 @@ import { StaticTokenProvider, type TokenProvider } from "./token.js";
  *
  * @example
  * ```ts
- * const client = new TradingClient({ accessToken: process.env.TOSS_ACCESS_TOKEN });
+ * const client = new TradingClient({ accessToken: process.env.TOSSINVEST_ACCESS_TOKEN });
  * const stocks = await client.request("api/v1/stocks", { query: { symbols: "005930" } });
  * ```
  */

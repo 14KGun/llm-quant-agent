@@ -61,7 +61,7 @@
 ### Phase 1 — 패키지 스캐폴딩 & HTTP 코어 ✅
 - [x] `packages/trading-client` 워크스페이스 추가 (`@llm-quant/trading-client`)
 - [x] `package.json` / `tsconfig.json` / tsup 빌드 / vitest 설정 (feed-client 미러링)
-- [x] `TradingClient` 코어: `clientId`·`clientSecret`·`accessToken`·`baseUrl` 주입, 설정 검증 (`TOSS_CLIENT_ID`/`TOSS_CLIENT_SECRET`/`TOSS_ACCESS_TOKEN` 폴백)
+- [x] `TradingClient` 코어: `clientId`·`clientSecret`·`accessToken`·`baseUrl` 주입, 설정 검증 (`TOSSINVEST_API_KEY`/`TOSSINVEST_SECRET_KEY`/`TOSSINVEST_ACCESS_TOKEN` 폴백)
 - [x] `HttpClient`: URL 빌더, `Authorization`/`X-Tossinvest-Account` 헤더 주입, BFF `{ result }` envelope 언래핑
 - [x] 에러 계층(`TossError`/`TossConfigError`/`TossApiError`) — `{ error }` envelope 파싱, 타임아웃(AbortController)
 - [x] 레이트리밋(429)·5xx·네트워크 오류 지수 백오프 재시도 (`Retry-After` 존중, jitter)

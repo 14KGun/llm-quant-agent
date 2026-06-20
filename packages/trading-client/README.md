@@ -24,9 +24,9 @@
 
 | 옵션 | 환경변수 | 설명 |
 | :--- | :--- | :--- |
-| `clientId` | `TOSS_CLIENT_ID` | OAuth 2.0 client id (Phase 2 에서 사용) |
-| `clientSecret` | `TOSS_CLIENT_SECRET` | OAuth 2.0 client secret (Phase 2 에서 사용) |
-| `accessToken` | `TOSS_ACCESS_TOKEN` | 미리 발급한 액세스 토큰 (Phase 1) |
+| `clientId` | `TOSSINVEST_API_KEY` | OAuth 2.0 client id (Phase 2 에서 사용) |
+| `clientSecret` | `TOSSINVEST_SECRET_KEY` | OAuth 2.0 client secret (Phase 2 에서 사용) |
+| `accessToken` | `TOSSINVEST_ACCESS_TOKEN` | 미리 발급한 액세스 토큰 (Phase 1) |
 | `accountSeq` | — | 계좌·자산·주문 API 기본 계좌 (`X-Tossinvest-Account`) |
 | `baseUrl` | — | 기본값 `https://openapi.tossinvest.com` |
 | `timeoutMs` / `maxRetries` / `retryBaseDelayMs` | — | 타임아웃·재시도 정책 |
@@ -39,8 +39,8 @@
 ```ts
 import { TradingClient } from "@llm-quant/trading-client";
 
-// accessToken 미지정 시 TOSS_ACCESS_TOKEN 환경변수를 사용한다.
-const client = new TradingClient({ accessToken: process.env.TOSS_ACCESS_TOKEN });
+// accessToken 미지정 시 TOSSINVEST_ACCESS_TOKEN 환경변수를 사용한다.
+const client = new TradingClient({ accessToken: process.env.TOSSINVEST_ACCESS_TOKEN });
 
 // 시세·종목 정보 (토큰만 필요) — 응답은 BFF envelope 에서 자동 언래핑된다.
 const stocks = await client.request<unknown[]>("api/v1/stocks", {
