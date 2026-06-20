@@ -41,3 +41,5 @@ jobs:
         run: pnpm test
         env:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          TOSSINVEST_API_KEY: ${{ secrets.TOSSINVEST_API_KEY }}
+          TOSSINVEST_SECRET_KEY: ${{ secrets.TOSSINVEST_SECRET_KEY }}

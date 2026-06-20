@@ -7,7 +7,7 @@
     },
     "test": {
       "dependsOn": ["^build"],
-      "passThroughEnv": ["FMP_API_KEY"]
+      "passThroughEnv": ["FMP_API_KEY", "TOSSINVEST_API_KEY", "TOSSINVEST_SECRET_KEY"]
     },
     "typecheck": {
       "dependsOn": ["^build"]
