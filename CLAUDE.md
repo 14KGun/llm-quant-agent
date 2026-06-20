@@ -10,6 +10,7 @@ FMP API + 토스증권 API 기반 LLM 투자 에이전트 시스템.
 |---|---|
 | [001_init.md](./docs/plans/001_init.md) | 초기 아키텍처 및 디렉토리 구조 |
 | [002_init_for_feed_client.md](./docs/plans/002_init_for_feed_client.md) | feed-client SDK 설계 (FMP 함수 목록 & Phase 계획) |
+| [003_init_for_trading_client.md](./docs/plans/003_init_for_trading_client.md) | trading-client SDK 설계 (토스증권 함수 목록 & Phase 계획) |
 
 ## 개발 워크플로우
 
