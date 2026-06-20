@@ -97,6 +97,8 @@ export class HttpClient {
     const url = this.buildUrl(path, options.query);
     const method = options.method ?? "GET";
     let lastError: unknown;
+    // 401 수신 시 토큰을 1 회 무효화·재발급하고 재시도한다(일시 재시도 예산과 별개).
+    let reauthed = false;
 
     for (let attempt = 0; attempt <= this.config.maxRetries; attempt++) {
       try {
@@ -108,6 +110,17 @@ export class HttpClient {
         }
 
         const apiError = await this.parseError(response, path);
+
+        if (
+          response.status === 401 &&
+          !reauthed &&
+          typeof this.tokenProvider.invalidate === "function"
+        ) {
+          reauthed = true;
+          this.tokenProvider.invalidate();
+          attempt--; // 인증 재시도는 일시 재시도 예산에서 차감하지 않는다.
+          continue;
+        }
 
         if (RETRYABLE_STATUS.has(response.status) && attempt < this.config.maxRetries) {
           lastError = apiError;

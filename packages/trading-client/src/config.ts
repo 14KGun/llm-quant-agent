@@ -26,6 +26,11 @@ export interface TradingClientConfig {
   /** Base delay (ms) for exponential backoff between retries. Defaults to 500. */
   retryBaseDelayMs?: number;
   /**
+   * 액세스 토큰을 만료 며 ms 전에 선제 재발급할지. 기본 60_000.
+   * OAuth 토큰 공급자에만 적용된다.
+   */
+  tokenRefreshMarginMs?: number;
+  /**
    * 성공 응답을 캐시할 TTL(ms). 0/미지정이면 캐시 비활성화.
    * 종목 마스터·장 운영 시간처럼 갱신 주기가 긴 GET 응답의 중복 호출을 줄인다.
    */
@@ -54,6 +59,7 @@ export interface ResolvedConfig {
   timeoutMs: number;
   maxRetries: number;
   retryBaseDelayMs: number;
+  tokenRefreshMarginMs: number;
   cacheTtlMs: number;
   maxConcurrentRequests: number;
   fetch: typeof fetch;
@@ -63,6 +69,7 @@ export const DEFAULT_BASE_URL = "https://openapi.tossinvest.com";
 export const DEFAULT_TIMEOUT_MS = 10_000;
 export const DEFAULT_MAX_RETRIES = 3;
 export const DEFAULT_RETRY_BASE_DELAY_MS = 500;
+export const DEFAULT_TOKEN_REFRESH_MARGIN_MS = 60_000;
 
 /** Validate and merge user config with defaults and environment variables. */
 export function resolveConfig(config: TradingClientConfig = {}): ResolvedConfig {
@@ -96,6 +103,7 @@ export function resolveConfig(config: TradingClientConfig = {}): ResolvedConfig 
     timeoutMs: config.timeoutMs ?? DEFAULT_TIMEOUT_MS,
     maxRetries: config.maxRetries ?? DEFAULT_MAX_RETRIES,
     retryBaseDelayMs: config.retryBaseDelayMs ?? DEFAULT_RETRY_BASE_DELAY_MS,
+    tokenRefreshMarginMs: config.tokenRefreshMarginMs ?? DEFAULT_TOKEN_REFRESH_MARGIN_MS,
     cacheTtlMs: config.cacheTtlMs ?? 0,
     maxConcurrentRequests: config.maxConcurrentRequests ?? 0,
     fetch: fetchImpl,

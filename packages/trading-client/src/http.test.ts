@@ -154,6 +154,60 @@ describe("HttpClient error handling", () => {
   });
 });
 
+describe("HttpClient 401 re-auth", () => {
+  it("invalidates the token and retries once on 401 when supported", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ error: { code: "expired-token" } }, 401))
+      .mockResolvedValueOnce(jsonResponse({ result: true }));
+    const invalidate = vi.fn();
+    let n = 0;
+    const tokenProvider = {
+      getAccessToken: () => Promise.resolve(`t${n++}`),
+      invalidate,
+    };
+    const config = resolveConfig({
+      accessToken: "seed",
+      baseUrl: "https://api.test",
+      retryBaseDelayMs: 1,
+      fetch: fetchImpl,
+    });
+    const client = new HttpClient(config, tokenProvider);
+
+    await expect(client.get("api/v1/stocks")).resolves.toBe(true);
+    expect(invalidate).toHaveBeenCalledOnce();
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    // 재발급된 토큰이 두 번째 요청에 실렸는지 확인.
+    const secondInit = fetchImpl.mock.calls[1]![1] as RequestInit;
+    expect((secondInit.headers as Record<string, string>).Authorization).toBe("Bearer t1");
+  });
+
+  it("re-auths at most once, then surfaces a persistent 401", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ error: { code: "invalid-token" } }, 401));
+    const tokenProvider = { getAccessToken: () => Promise.resolve("t"), invalidate: vi.fn() };
+    const config = resolveConfig({
+      accessToken: "seed",
+      baseUrl: "https://api.test",
+      retryBaseDelayMs: 1,
+      fetch: fetchImpl,
+    });
+    const client = new HttpClient(config, tokenProvider);
+
+    await expect(client.get("api/v1/stocks")).rejects.toBeInstanceOf(TossApiError);
+    expect(tokenProvider.invalidate).toHaveBeenCalledOnce();
+    expect(fetchImpl).toHaveBeenCalledTimes(2); // 최초 + 재인증 1회
+  });
+
+  it("does not retry a 401 when the provider has no invalidate", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValue(jsonResponse({ error: { code: "invalid-token" } }, 401));
+    const client = makeClient(fetchImpl); // StaticTokenProvider — invalidate 없음
+    await expect(client.get("api/v1/stocks")).rejects.toBeInstanceOf(TossApiError);
+    expect(fetchImpl).toHaveBeenCalledOnce();
+  });
+});
+
 describe("HttpClient retries", () => {
   it("retries on 429 then succeeds", async () => {
     const fetchImpl = vi

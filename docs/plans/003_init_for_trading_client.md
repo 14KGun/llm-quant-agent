@@ -69,11 +69,13 @@
 - [x] TTL 캐싱(`cacheTtlMs`, GET 한정) / 동시 요청 제한(`maxConcurrentRequests`, 세마포어)
 - [x] 단위 테스트 (config / 헤더·envelope / 재시도 / 캐싱 / 동시성 / 에러)
 
-### Phase 2 — 인증 & 토큰 관리 ⭐
-- [ ] `AuthResource`: `client_credentials` 토큰 발급 (`application/x-www-form-urlencoded`)
-- [ ] 토큰 캐시 + 만료 임박 선제 재발급, 401(`expired-token`/`invalid-token`) 시 1회 재발급 후 재시도
-- [ ] 동시 재발급 single-flight
-- [ ] `X-Tossinvest-Account` 기본 계좌 주입 옵션
+### Phase 2 — 인증 & 토큰 관리 ⭐ ✅
+- [x] `OAuthTokenProvider`: `client_credentials` 토큰 발급 (`application/x-www-form-urlencoded`)
+- [x] 토큰 캐시 + 만료 임박 선제 재발급(`tokenRefreshMarginMs`), 401(`expired-token`/`invalid-token`) 시 1회 재발급 후 재시도
+- [x] 동시 재발급 single-flight (in-flight Promise 공유)
+- [x] OAuth 표준 에러(`{ error, error_description }`) + BFF envelope 양쪽 파싱
+- [x] `X-Tossinvest-Account` 기본 계좌 주입 옵션 (`accountSeq`, Phase 1 에서 도입·검증)
+- [x] 단위 테스트 (발급/캐싱/single-flight/invalidate/401 재인증/에러)
 
 ### Phase 3 — 시세·종목 정보 (읽기) ⭐
 - [ ] Market Data / Stock Info / Market Info 리소스 + 응답 타입(`src/types/`)
